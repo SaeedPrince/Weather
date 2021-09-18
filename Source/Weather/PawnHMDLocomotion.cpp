@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "PawnVR.h"
+#include "PawnHMDLocomotion.h"
 // Public
 // Sets default values
-APawnVR::APawnVR()
+APawnHMDLocomotion::APawnHMDLocomotion()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -66,22 +66,21 @@ APawnVR::APawnVR()
 		}
 	}
 }
+// Called when the game starts or when spawned
+void APawnHMDLocomotion::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
 // Called every frame
-void APawnVR::Tick(float DeltaTime)
+void APawnHMDLocomotion::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 // Called to bind functionality to input
-void APawnVR::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void APawnHMDLocomotion::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-// Protected
-// Called when the game starts or when spawned
-void APawnVR::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }

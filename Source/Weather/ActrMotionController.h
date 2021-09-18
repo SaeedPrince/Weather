@@ -50,6 +50,27 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
 		EControllerHand GetControllerHand();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
+		bool IsValidTeleportDestination();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
+		bool IsTeleportActive();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
+		void GetTeleportDestination(FVector& Location, FRotator& Rotation);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
+		FRotator GetInitialHandControllerRotation();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
+		class UMotionControllerComponent* GetHandMotionController();
+
+	UFUNCTION(BlueprintCallable, Category = "Setters")
+		void SetControllerHand(EControllerHand inHand);
+
+	UFUNCTION(BlueprintCallable, Category = "Setters")
+		void SetHandTeleportRotation(const FRotator& inRotator);
+
 	UFUNCTION(BlueprintCallable, Category = "Commands")
 		void RumbleController(float intensity);
 
@@ -139,7 +160,7 @@ protected:
 		class AActor* AttachedActor;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Variables")
-		bool IsTeleporterActive;
+		bool bTeleporterActive;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Variables")
 		TArray<class USplineMeshComponent*> SplineMeshes;
@@ -154,7 +175,7 @@ protected:
 		FVector TeleportDestination;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Variables")
-		bool IsValidTeleportDestination;
+		bool bValidTeleportDestination;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Init")
 		eGripState GripState;

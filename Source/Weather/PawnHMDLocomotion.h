@@ -1,7 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
-
 // Engine minimal requirement
 #include "CoreMinimal.h"
 
@@ -16,7 +14,7 @@
 #include "Components/ArrowComponent.h"
 
 // Generated
-#include "PawnVR.generated.h"
+#include "PawnHMDLocomotion.generated.h"
 
 class UStaticMesh;
 class UCameraComponent;
@@ -25,13 +23,13 @@ class UStaticMeshComponent;
 class UMaterialInstanceDynamic;
 
 UCLASS()
-class WEATHER_API APawnVR : public APawn
+class WEATHER_API APawnHMDLocomotion : public APawn
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	APawnVR();
+	APawnHMDLocomotion();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -40,6 +38,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

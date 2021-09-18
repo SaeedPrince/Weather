@@ -150,15 +150,15 @@ void AActrMotionController::Tick(float DeltaTime)
 		}
 	}
 	_ClearArc();
-	if (IsTeleporterActive)
+	if (bTeleporterActive)
 	{
 		TArray<FVector> TracePoints{};
 		FVector NavMeshLocation = FVector();
 		FVector TraceLocation = FVector();
-		IsValidTeleportDestination = _TraceTeleportDestination(TracePoints, NavMeshLocation, TraceLocation);
+		bValidTeleportDestination = _TraceTeleportDestination(TracePoints, NavMeshLocation, TraceLocation);
 		if (IsValid(TeleportCylinder))
 		{
-			TeleportCylinder->SetVisibility(IsValidTeleportDestination, true);
+			TeleportCylinder->SetVisibility(bValidTeleportDestination, true);
 			TEnumAsByte<EObjectTypeQuery> theQ = EObjectTypeQuery::ObjectTypeQuery1;
 			TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes{};
 			ObjectTypes.Add(theQ);
@@ -168,13 +168,13 @@ void AActrMotionController::Tick(float DeltaTime)
 			FVector NewLocation = (outHit.bBlockingHit ? outHit.ImpactPoint : NavMeshLocation);
 			TeleportCylinder->SetWorldLocation(NewLocation, false, nullptr, ETeleportType::TeleportPhysics);
 		}
-		if ((IsValidTeleportDestination && !bLastFrameValidDestination) || (!IsValidTeleportDestination && bLastFrameValidDestination))
+		if ((bValidTeleportDestination && !bLastFrameValidDestination) || (!bValidTeleportDestination && bLastFrameValidDestination))
 		{
 			RumbleController(0.3f);
 		}
-		bLastFrameValidDestination = IsValidTeleportDestination;
-		_UpdateArcSpline(IsValidTeleportDestination, TracePoints);
-		_UpdateArcEndpoint(TraceLocation, IsValidTeleportDestination);
+		bLastFrameValidDestination = bValidTeleportDestination;
+		_UpdateArcSpline(bValidTeleportDestination, TracePoints);
+		_UpdateArcEndpoint(TraceLocation, bValidTeleportDestination);
 	}
 	_UpdateRoomScaleOutline();
 	if (IsValid(HandMesh))
@@ -189,12 +189,48 @@ void AActrMotionController::Tick(float DeltaTime)
 		}
 	}
 }
-
+// Getters
 EControllerHand AActrMotionController::GetControllerHand()
 {
 	return Hand;
 }
-
+bool AActrMotionController::IsValidTeleportDestination()
+{
+	return bValidTeleportDestination;
+}
+bool AActrMotionController::IsTeleportActive()
+{
+	return bTeleporterActive;
+}
+void AActrMotionController::GetTeleportDestination(FVector& Location, FRotator& Rotation)
+{
+	if (IsValid(TeleportCylinder))
+	{
+		FVector DevicePos;
+		FRotator DeviceRot;
+		UHeadMountedDisplayFunctionLibrary::GetOrientationAndPosition(DeviceRot, DevicePos);
+		Rotation = TeleportRotation;
+		Location = UKismetMathLibrary::Subtract_VectorVector(TeleportCylinder->GetComponentLocation(), UKismetMathLibrary::Quat_RotateVector(FQuat(Rotation), FVector(DevicePos.X, DevicePos.Y, 0.0f)));
+	}
+}
+FRotator AActrMotionController::GetInitialHandControllerRotation()
+{
+	return InitialControllerRotation;
+}
+UMotionControllerComponent* AActrMotionController::GetHandMotionController()
+{
+	return MotionController;
+}
+// Setters
+void AActrMotionController::SetControllerHand(EControllerHand inHand)
+{
+	Hand = inHand;
+}
+void AActrMotionController::SetHandTeleportRotation(const FRotator& inRotator)
+{
+	TeleportRotation = inRotator;
+}
+// Commands
 void AActrMotionController::RumbleController(float intensity)
 {
 	if (IsValid(HapticFeedbackEffectBase))
@@ -245,7 +281,7 @@ void AActrMotionController::ReleaseActor()
 // Teleportation
 void AActrMotionController::ActivateTeleporter()
 {
-	IsTeleporterActive = true;
+	bTeleporterActive = true;
 	if (IsValid(TeleportCylinder))
 	{
 		TeleportCylinder->SetVisibility(true, true);
@@ -261,9 +297,9 @@ void AActrMotionController::ActivateTeleporter()
 }
 void AActrMotionController::DisableTeleporter()
 {
-	if (IsTeleporterActive)
+	if (bTeleporterActive)
 	{
-		IsTeleporterActive = false;
+		bTeleporterActive = false;
 		if (IsValid(TeleportCylinder))
 		{
 			TeleportCylinder->SetVisibility(false, true);
@@ -428,7 +464,7 @@ void AActrMotionController::_UpdateArcEndpoint(const FVector& NewLocation, bool 
 {
 	if (IsValid(ArcEndPoint))
 	{
-		ArcEndPoint->SetVisibility(bFoundValidLocation && IsTeleporterActive);
+		ArcEndPoint->SetVisibility(bFoundValidLocation && bTeleporterActive);
 		ArcEndPoint->SetWorldLocation(NewLocation);
 	}
 	FRotator rot;
